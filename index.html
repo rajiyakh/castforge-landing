@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CastForge Arena — Forge Your Legacy</title>
+<meta property="og:title" content="CastForge Arena"/>
+<meta property="og:description" content="Play. Earn. Forge your legacy on Base."/>
+<meta property="og:image" content="https://castforge-arena.vercel.app/og.png"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  :root{
+    --fire:#E85D04;
+    --gold:#FFD700;
+    --dark:#060200;
+    --card:#110800;
+    --text:#ffd090;
+    --muted:#7a5a30;
+  }
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--dark);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* Background ambient */
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(ellipse at 15% 85%, rgba(180,60,0,0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 10%, rgba(100,30,0,0.14) 0%, transparent 50%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* Embers */
+  .ember{
+    position:fixed;
+    width:3px;height:3px;
+    border-radius:50%;
+    animation:emberRise linear infinite;
+    pointer-events:none;
+    z-index:1;
+  }
+  @keyframes emberRise{
+    0%{opacity:0.9;transform:translateY(0) scale(1);}
+    100%{opacity:0;transform:translateY(-100vh) scale(0.2);}
+  }
+
+  /* Shimmer line */
+  @keyframes shimLine{0%{left:-60%}100%{left:120%}}
+  @keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+  @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  @keyframes fadeSlideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes goldGlow{0%,100%{text-shadow:0 0 20px rgba(255,215,0,0.3)}50%{text-shadow:0 0 40px rgba(255,215,0,0.7),0 0 80px rgba(232,93,4,0.3)}}
+
+  /* Nav */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(6,2,0,0.85);
+    border-bottom:1px solid rgba(232,93,4,0.3);
+    backdrop-filter:blur(12px);
+  }
+  .nav-logo{display:flex;align-items:center;gap:10px;}
+  .nav-icon{
+    width:36px;height:36px;
+    background:linear-gradient(135deg,#8B2500,#E85D04);
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;
+    box-shadow:0 0 12px rgba(232,93,4,0.4);
+  }
+  .nav-title{font-size:18px;font-weight:700;color:var(--text);}
+  .nav-title span{color:var(--fire);}
+  .nav-live{display:flex;align-items:center;gap:5px;font-size:10px;color:#2ecc71;font-weight:700;letter-spacing:1px;margin-top:2px;}
+  .nav-dot{width:6px;height:6px;border-radius:50%;background:#2ecc71;animation:pulse 1.5s infinite;}
+  .nav-cta{
+    background:linear-gradient(90deg,#8B2500,#E85D04);
+    color:#fff;border:none;border-radius:24px;
+    padding:10px 22px;font-size:14px;font-weight:700;
+    cursor:pointer;text-decoration:none;
+    position:relative;overflow:hidden;
+    transition:transform 0.2s;
+  }
+  .nav-cta::after{
+    content:'';position:absolute;
+    top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+    animation:shimLine 2s linear infinite;
+  }
+  .nav-cta:hover{transform:scale(1.05);}
+
+  /* Hero */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    text-align:center;
+    padding:100px 24px 60px;
+    position:relative;z-index:2;
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(26,13,0,0.8);
+    border:1px solid var(--fire);
+    border-radius:30px;padding:7px 18px;
+    font-size:12px;font-weight:700;color:var(--fire);
+    letter-spacing:1px;margin-bottom:28px;
+    animation:fadeSlideUp 0.6s ease-out both;
+  }
+  .hero-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(64px,15vw,130px);
+    line-height:0.9;
+    color:var(--text);
+    margin-bottom:8px;
+    animation:fadeSlideUp 0.7s ease-out 0.1s both;
+  }
+  .hero-title .fire{color:var(--fire);}
+  .hero-title .gold{color:var(--gold);animation:goldGlow 3s ease-in-out infinite;}
+  .hero-sub{
+    font-size:clamp(16px,3vw,22px);
+    color:var(--muted);
+    margin-bottom:40px;
+    font-weight:500;
+    letter-spacing:0.5px;
+    animation:fadeSlideUp 0.7s ease-out 0.2s both;
+  }
+  .hero-btns{
+    display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
+    animation:fadeSlideUp 0.7s ease-out 0.3s both;
+  }
+  .btn-primary{
+    background:linear-gradient(90deg,#8B2500,#E85D04,#F48C06);
+    color:#fff;border:none;border-radius:16px;
+    padding:16px 36px;font-size:17px;font-weight:700;
+    cursor:pointer;text-decoration:none;
+    position:relative;overflow:hidden;
+    box-shadow:0 4px 24px rgba(232,93,4,0.4);
+    transition:transform 0.2s,box-shadow 0.2s;
+    letter-spacing:0.5px;
+  }
+  .btn-primary::after{
+    content:'';position:absolute;
+    top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+    animation:shimLine 1.8s linear infinite;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(232,93,4,0.6);}
+  .btn-secondary{
+    background:transparent;
+    border:1px solid var(--fire);color:var(--fire);
+    border-radius:16px;padding:15px 28px;
+    font-size:16px;font-weight:600;
+    cursor:pointer;text-decoration:none;
+    transition:background 0.2s;
+  }
+  .btn-secondary:hover{background:rgba(232,93,4,0.1);}
+
+  /* Stats row */
+  .stats{
+    display:flex;gap:0;justify-content:center;flex-wrap:wrap;
+    margin:60px auto 0;max-width:700px;
+    position:relative;z-index:2;
+    animation:fadeSlideUp 0.7s ease-out 0.4s both;
+  }
+  .stat{
+    flex:1;min-width:140px;text-align:center;
+    padding:24px 20px;
+    border-right:1px solid rgba(232,93,4,0.2);
+  }
+  .stat:last-child{border-right:none;}
+  .stat-num{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:48px;color:var(--fire);line-height:1;
+  }
+  .stat-label{font-size:12px;color:var(--muted);margin-top:4px;font-weight:600;letter-spacing:1px;}
+
+  /* Features */
+  .section{
+    max-width:900px;margin:0 auto;
+    padding:80px 24px;
+    position:relative;z-index:2;
+    scroll-margin-top:80px;
+  }
+  .token-section{scroll-margin-top:80px;}
+  .section-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:48px;color:var(--text);
+    text-align:center;margin-bottom:8px;
+  }
+  .section-sub{
+    text-align:center;color:var(--muted);
+    font-size:15px;margin-bottom:48px;
+  }
+  .features{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+  }
+  .feature-card{
+    background:rgba(17,8,0,0.8);
+    border:1px solid rgba(58,26,0,0.8);
+    border-radius:16px;padding:24px;
+    transition:border-color 0.3s,transform 0.2s;
+    position:relative;overflow:hidden;
+  }
+  .feature-card::before{
+    content:'';position:absolute;
+    top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--fire),transparent);
+    opacity:0;transition:opacity 0.3s;
+  }
+  .feature-card:hover{border-color:var(--fire);transform:translateY(-4px);}
+  .feature-card:hover::before{opacity:1;}
+  .feature-icon{font-size:32px;margin-bottom:14px;}
+  .feature-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px;}
+  .feature-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+  .feature-tag{
+    display:inline-block;
+    background:rgba(232,93,4,0.15);border:0.5px solid var(--fire);
+    border-radius:20px;padding:2px 10px;
+    font-size:10px;color:var(--fire);font-weight:700;
+    margin-top:12px;
+  }
+
+  /* Token section */
+  .token-section{
+    max-width:700px;margin:0 auto;
+    padding:60px 24px 80px;
+    text-align:center;
+    position:relative;z-index:2;
+  }
+  .token-box{
+    background:linear-gradient(135deg,#120e00,#1e1800);
+    border:1px solid #8B6914;
+    border-radius:20px;padding:40px 24px;
+    position:relative;overflow:hidden;
+  }
+  .token-box::before{
+    content:'';position:absolute;
+    top:0;left:-60%;width:40%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,215,0,0.06),transparent);
+    animation:shimLine 3s linear infinite;
+  }
+  .token-label{font-size:10px;color:#8B6914;letter-spacing:3px;font-weight:700;margin-bottom:14px;}
+  .token-amount{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:72px;color:var(--gold);
+    line-height:1;margin-bottom:8px;
+    animation:goldGlow 3s ease-in-out infinite;
+  }
+  .token-name{font-size:18px;color:#8B6914;letter-spacing:3px;font-weight:700;}
+  .token-divider{
+    display:flex;align-items:center;gap:12px;
+    margin:20px 0;
+  }
+  .token-divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,#8B6914);}
+  .token-divider-line.right{background:linear-gradient(90deg,#8B6914,transparent);}
+  .token-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:10px;text-align:left;
+  }
+  .token-item{
+    background:rgba(10,5,0,0.6);
+    border-radius:10px;padding:12px;
+  }
+  .token-item-label{font-size:10px;color:var(--muted);margin-bottom:4px;}
+  .token-item-val{font-size:15px;font-weight:700;color:var(--text);}
+
+  /* CTA section */
+  .cta-section{
+    text-align:center;
+    padding:60px 24px 100px;
+    position:relative;z-index:2;
+  }
+  .cta-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(40px,8vw,72px);
+    color:var(--text);margin-bottom:12px;
+  }
+  .cta-title span{color:var(--fire);}
+  .cta-sub{color:var(--muted);font-size:16px;margin-bottom:32px;}
+
+  /* Footer */
+  footer{
+    border-top:1px solid rgba(58,26,0,0.5);
+    padding:24px;text-align:center;
+    font-size:12px;color:var(--muted);
+    position:relative;z-index:2;
+  }
+
+  @keyframes fireArrowBounce{
+    0%,100%{transform:translateX(0);filter:drop-shadow(0 0 4px #E85D04);}
+    50%{transform:translateX(5px);filter:drop-shadow(0 0 12px #E85D04) drop-shadow(0 0 20px #FF6600);}
+  }
+  @keyframes sparkPop{
+    0%,100%{opacity:0;transform:scale(0.5);}
+    50%{opacity:1;transform:scale(1.3);color:#FFD700;text-shadow:0 0 8px #FFD700,0 0 16px #E85D04;}
+  }
+  @keyframes heroCyberScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  @keyframes heroCyberGlow{0%,100%{opacity:0.5;text-shadow:none}50%{opacity:1;text-shadow:0 0 10px #00ffff,0 0 20px #0088ff,0 0 40px #00ffff44}}
+  @keyframes heroCyberDot{0%,100%{opacity:0.2}50%{opacity:1;text-shadow:0 0 8px #00ffff}}
+  @keyframes heroCyberSpark{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.3);text-shadow:0 0 12px #00ffff,0 0 24px #0088ff}}
+  @media(max-width:600px){
+    .stat{min-width:120px;padding:20px 12px;}
+    .stat-num{font-size:36px;}
+    .token-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Embers -->
+<div class="ember" style="background:#E85D04;left:10%;bottom:0;animation-duration:6s;animation-delay:0s;"></div>
+<div class="ember" style="background:#FF6600;left:25%;bottom:0;animation-duration:8s;animation-delay:1s;"></div>
+<div class="ember" style="background:#FFD700;left:45%;bottom:0;animation-duration:7s;animation-delay:2s;"></div>
+<div class="ember" style="background:#E85D04;left:65%;bottom:0;animation-duration:9s;animation-delay:0.5s;"></div>
+<div class="ember" style="background:#FF8800;left:80%;bottom:0;animation-duration:6.5s;animation-delay:1.5s;"></div>
+
+<!-- Nav -->
+<style>
+.nav-menu{display:flex;align-items:center;gap:4px;}
+.nav-link{
+  color:#7a5a30;font-size:13px;font-weight:600;
+  text-decoration:none;padding:7px 14px;border-radius:8px;
+  cursor:pointer;background:none;border:none;
+  transition:color 0.2s,background 0.2s;
+  font-family:'Inter',sans-serif;
+}
+.nav-link:hover{color:#ffd090;background:rgba(232,93,4,0.08);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+.mobile-menu{
+  display:none;position:fixed;top:64px;left:0;right:0;
+  background:rgba(6,2,0,0.97);border-bottom:1px solid rgba(232,93,4,0.2);
+  flex-direction:column;padding:12px 16px;gap:4px;z-index:99;
+  backdrop-filter:blur(12px);
+}
+.mobile-menu.open{display:flex;}
+.mobile-link{
+  color:#7a5a30;font-size:15px;font-weight:600;
+  padding:12px 16px;border-radius:10px;
+  cursor:pointer;text-decoration:none;
+  transition:color 0.2s,background 0.2s;
+}
+.mobile-link:hover{color:#ffd090;background:rgba(232,93,4,0.08);}
+@media(max-width:700px){
+  .nav-menu{display:none;}
+  .hamburger{display:block;}
+}
+</style>
+
+<nav>
+  <div class="nav-logo">
+    <div class="nav-icon">⚒</div>
+    <div>
+      <div class="nav-title">Cast<span>Forge</span> Arena</div>
+      <div class="nav-live"><div class="nav-dot"></div>LIVE ON BASE</div>
+    </div>
+  </div>
+
+  <div class="nav-menu">
+    <span class="nav-link" onclick="smoothTo('about')">About</span>
+    <span class="nav-link" onclick="smoothTo('features')">Games</span>
+    <span class="nav-link" onclick="smoothTo('tokenomics')">Tokenomics</span>
+    <span class="nav-link" onclick="smoothTo('roadmap')">Roadmap</span>
+  </div>
+
+  <div class="nav-right">
+    <div style="display:flex;align-items:center;gap:4px;">
+      <!-- Fire Arrow -->
+      <div style="position:relative;display:flex;align-items:center;">
+        <span id="fire-arrow" style="font-size:20px;animation:fireArrowBounce 0.8s ease-in-out infinite;display:inline-block;filter:drop-shadow(0 0 6px #E85D04);">👉</span>
+        <span style="position:absolute;top:-6px;right:-4px;font-size:8px;animation:sparkPop 1s ease-in-out infinite;opacity:0.9;">✦</span>
+        <span style="position:absolute;bottom:-5px;left:0px;font-size:7px;animation:sparkPop 1s ease-in-out infinite 0.4s;opacity:0.8;">✦</span>
+      </div>
+      <a href="https://farcaster.xyz/castforge" target="_blank" style="display:flex;align-items:center;gap:6px;background:rgba(124,58,237,0.15);border:1px solid #7c3aed;border-radius:24px;padding:8px 16px;font-size:13px;font-weight:700;color:#a855f7;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='rgba(124,58,237,0.25)'" onmouseout="this.style.background='rgba(124,58,237,0.15)'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#a855f7"><path d="M11.763 0h.474C18.323 0 24 5.477 24 12.237v.527C24 18.523 18.523 24 11.763 24h-.527C4.777 24 0 18.523 0 12.763v-.527C0 5.477 5.477 0 11.763 0zm.237 3.9c-4.476 0-8.1 3.624-8.1 8.1s3.624 8.1 8.1 8.1 8.1-3.624 8.1-8.1-3.624-8.1-8.1-8.1zM8.4 7.8h7.2v1.8H14.1v4.8h1.5v1.8H8.4v-1.8h1.5V9.6H8.4V7.8z"/></svg>
+        Follow
+      </a>
+    </div>
+    <div class="nav-cta" style="cursor:not-allowed;opacity:0.8;" onclick="showComingSoon('App')">🔒 Open App</div>
+    <button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd090" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Cyber Presale Bar -->
+<div style="background:#00080f;border-bottom:1px solid #003344;overflow:hidden;padding:8px 0;position:sticky;top:62px;z-index:99;margin-top:-1px;">
+  <div style="display:flex;animation:heroCyberScroll 16s linear infinite;width:max-content;">
+    <div style="display:flex;align-items:center;gap:14px;padding:0 24px;white-space:nowrap;">
+      <span style="color:#00ffff;font-size:12px;animation:heroCyberDot 0.8s infinite;">▶</span>
+      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:3px;animation:heroCyberGlow 1.5s ease-in-out infinite;font-family:monospace;">$FORGE</span>
+      <span style="font-size:12px;color:#0088ff;font-family:monospace;font-weight:700;animation:heroCyberGlow 1.5s ease-in-out infinite 0.3s;">PRESALE</span>
+      <span style="font-size:12px;color:#004466;font-family:monospace;">COMING_SOON</span>
+      <span style="font-size:12px;color:#00ffff;animation:heroCyberDot 0.8s infinite 0.4s;">◈</span>
+      <span style="font-size:12px;color:#00ccff;font-family:monospace;font-weight:700;animation:heroCyberGlow 1.5s ease-in-out infinite 0.6s;">LIMITED_SPOTS</span>
+      <span style="font-size:12px;color:#00ffff;animation:heroCyberSpark 1.2s ease-in-out infinite;">✦</span>
+      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:3px;animation:heroCyberGlow 1.5s ease-in-out infinite 0.9s;font-family:monospace;">$FORGE</span>
+      <span style="font-size:12px;color:#0088ff;font-family:monospace;font-weight:700;animation:heroCyberGlow 1.5s ease-in-out infinite 1.2s;">PRESALE</span>
+      <span style="font-size:12px;color:#004466;font-family:monospace;">COMING_SOON</span>
+      <span style="font-size:12px;color:#00ffff;animation:heroCyberDot 0.8s infinite 0.4s;">◈</span>
+      <span style="font-size:12px;color:#00ccff;font-family:monospace;font-weight:700;animation:heroCyberGlow 1.5s ease-in-out infinite 1.5s;">LIMITED_SPOTS</span>
+      <span style="font-size:12px;color:#00ffff;animation:heroCyberSpark 1.2s ease-in-out infinite 0.6s;">✦</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;padding:0 24px;white-space:nowrap;">
+      <span style="color:#00ffff;font-size:12px;animation:heroCyberDot 0.8s infinite;">▶</span>
+      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:3px;animation:heroCyberGlow 1.5s ease-in-out infinite;font-family:monospace;">$FORGE</span>
+      <span style="font-size:12px;color:#0088ff;font-family:monospace;font-weight:700;animation:heroCyberGlow 1.5s ease-in-out infinite 0.3s;">PRESALE</span>
+      <span style="font-size:12px;color:#004466;font-family:monospace;">COMING_SOON</span>
+      <span style="font-size:12px;color:#00ffff;animation:heroCyberDot 0.8s infinite 0.4s;">◈</span>
+      <span style="font-size:12px;color:#00ccff;font-family:monospace;font-weight:700;animation:heroCyberGlow 1.5s ease-in-out infinite 0.6s;">LIMITED_SPOTS</span>
+      <span style="font-size:12px;color:#00ffff;animation:heroCyberSpark 1.2s ease-in-out infinite;">✦</span>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <span class="mobile-link" onclick="smoothTo('about');document.getElementById('mobile-menu').classList.remove('open')">About</span>
+  <span class="mobile-link" onclick="smoothTo('features');document.getElementById('mobile-menu').classList.remove('open')">Games</span>
+  <span class="mobile-link" onclick="smoothTo('tokenomics');document.getElementById('mobile-menu').classList.remove('open')">Tokenomics</span>
+  <span class="mobile-link" onclick="smoothTo('roadmap');document.getElementById('mobile-menu').classList.remove('open')">Roadmap</span>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+
+  <h1 class="hero-title">
+    <span class="fire">CAST</span><br>
+    <span class="gold">FORGE</span><br>
+    ARENA
+  </h1>
+  <p class="hero-sub">Play. Earn. Forge your legacy on Base.</p>
+  <div class="hero-btns">
+    <div class="btn-primary" style="cursor:not-allowed;opacity:0.7;" onclick="showComingSoon('Arena')">🔒 Enter The Arena</div>
+    <span class="btn-secondary" onclick="smoothTo('features')" style="cursor:pointer;">Learn More</span>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">5M</div>
+    <div class="stat-label">$FORGE Pool</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">666</div>
+    <div class="stat-label">OG Boxes</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">5K</div>
+    <div class="stat-label">FCFS Slots</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">$0</div>
+    <div class="stat-label">Free to Start</div>
+  </div>
+</div>
+
+<!-- About -->
+<section class="section" id="about">
+  <div class="section-title">ABOUT CASTFORGE ARENA</div>
+  <div class="section-sub">Where Farcaster meets onchain rewards — built for the bold</div>
+
+  <div style="background:linear-gradient(135deg,rgba(26,13,0,0.9),rgba(10,5,0,0.9));border:1px solid rgba(232,93,4,0.3);border-radius:20px;padding:32px;margin-bottom:32px;">
+    <div style="font-size:22px;font-weight:700;color:#ffd090;margin-bottom:16px;line-height:1.4;">
+      "The first gaming arena where every<br><span style="color:#E85D04;">cast</span> you make could be worth something."
+    </div>
+    <p style="font-size:15px;color:#7a5a30;line-height:1.9;margin-bottom:16px;">
+      CastForge Arena isn't just another mini app — it's the home of competitive Web3 gaming on Farcaster. We built an entire ecosystem where your time, skill, and social reach translate directly into real onchain rewards. Every game you play, every friend you invite, every token you earn is recorded permanently on Base Network.
+    </p>
+    <p style="font-size:15px;color:#7a5a30;line-height:1.9;">
+      We believe crypto adoption happens through <em style="color:#ffd090;">experience</em>, not lectures. So we built games that are fun first — and rewarding by design. Whether you're a casual player chasing free tokens or a KOL grinding USDC rewards, CastForge Arena has a place for you at the forge.
+    </p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:32px;">
+    <div style="background:rgba(17,8,0,0.8);border-radius:14px;padding:20px;border-left:3px solid #E85D04;">
+      <div style="font-size:22px;margin-bottom:8px;">⚡</div>
+      <div style="font-size:14px;font-weight:700;color:#ffd090;margin-bottom:6px;">Farcaster Native</div>
+      <div style="font-size:13px;color:#7a5a30;line-height:1.6;">Open directly in Warpcast — no downloads, no extra wallets. Your Farcaster identity is your passport.</div>
+    </div>
+    <div style="background:rgba(17,8,0,0.8);border-radius:14px;padding:20px;border-left:3px solid #2ecc71;">
+      <div style="font-size:22px;margin-bottom:8px;">🔗</div>
+      <div style="font-size:14px;font-weight:700;color:#ffd090;margin-bottom:6px;">Built on Base</div>
+      <div style="font-size:13px;color:#7a5a30;line-height:1.6;">Ultra-fast, near-zero gas fees. Every transaction is onchain — your rewards are real, not points on a server.</div>
+    </div>
+    <div style="background:rgba(17,8,0,0.8);border-radius:14px;padding:20px;border-left:3px solid #FFD700;">
+      <div style="font-size:22px;margin-bottom:8px;">💰</div>
+      <div style="font-size:14px;font-weight:700;color:#ffd090;margin-bottom:6px;">Real Rewards</div>
+      <div style="font-size:13px;color:#7a5a30;line-height:1.6;">ETH lottery prizes, USDC KOL rewards, $FORGE tokens — actual money, not imaginary points.</div>
+    </div>
+    <div style="background:rgba(17,8,0,0.8);border-radius:14px;padding:20px;border-left:3px solid #7c3aed;">
+      <div style="font-size:22px;margin-bottom:8px;">👥</div>
+      <div style="font-size:14px;font-weight:700;color:#ffd090;margin-bottom:6px;">Community First</div>
+      <div style="font-size:13px;color:#7a5a30;line-height:1.6;">40% of supply goes to the community. Earn by playing, earn more by growing the ecosystem with us.</div>
+    </div>
+  </div>
+
+  <div style="background:rgba(17,8,0,0.8);border:1px solid rgba(58,26,0,0.8);border-radius:16px;padding:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="font-size:12px;color:#5a3a10;letter-spacing:1px;margin-bottom:4px;">ARENA CONTRACT</div>
+      <div style="font-size:12px;color:#7a5a30;font-family:monospace;">0x896E862D7629510141915308f07B1C32bb890590</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="background:#1a0d00;border:0.5px solid #0052FF;border-radius:20px;padding:4px 12px;font-size:11px;color:#4d8eff;font-weight:600;">Base Network</span>
+      <span style="background:#1a0d00;border:0.5px solid #E85D04;border-radius:20px;padding:4px 12px;font-size:11px;color:#E85D04;font-weight:600;">ERC-20</span>
+      <span style="background:#1a0d00;border:0.5px solid #2ecc71;border-radius:20px;padding:4px 12px;font-size:11px;color:#2ecc71;font-weight:600;">Verified ✓</span>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" id="features">
+  <div class="section-title">GAMES INSIDE THE ARENA</div>
+  <div class="section-sub">4 live games now — more dropping every season</div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <div class="feature-title">Price Guess</div>
+      <div class="feature-desc">Think you know where ETH is headed? Predict UP or DOWN across 5 rounds. Each correct call earns $FORGE — streak bonuses for the bold.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
+        <div class="feature-tag">5 rounds</div>
+        <div class="feature-tag" style="border-color:#2ecc71;color:#2ecc71;">+150 $FORGE max</div>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎰</div>
+      <div class="feature-title">Forge Lottery</div>
+      <div class="feature-desc">Enter for $1 ETH, win big every 6 hours. The more players enter, the more winners share the prize pool. Fair, transparent, onchain.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
+        <div class="feature-tag">Every 6 hours</div>
+        <div class="feature-tag" style="border-color:#FFD700;color:#FFD700;">Multi-winner</div>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🪙</div>
+      <div class="feature-title">Token Rush</div>
+      <div class="feature-desc">30 seconds. Falling coins. Pure chaos. Tap as fast as you can to rack up points before the timer hits zero. Deceptively addictive.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
+        <div class="feature-tag">30 seconds</div>
+        <div class="feature-tag" style="border-color:#F48C06;color:#F48C06;">200 pts max</div>
+      </div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Forge Quiz</div>
+      <div class="feature-desc">5 Web3 questions. 15 seconds each. From DeFi to NFTs — how deep does your crypto knowledge go? Perfect score = bonus $FORGE.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;">
+        <div class="feature-tag">5 questions</div>
+        <div class="feature-tag" style="border-color:#7c3aed;color:#a855f7;">150 pts max</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coming Soon Games -->
+  <div style="margin-top:24px;background:rgba(17,8,0,0.6);border:1px dashed rgba(232,93,4,0.3);border-radius:16px;padding:24px;text-align:center;">
+    <div style="font-size:13px;color:#5a3a10;letter-spacing:2px;margin-bottom:12px;font-weight:700;">🔒 COMING NEXT SEASON</div>
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+      <span style="background:#1a0d00;border:0.5px solid #3a1a00;border-radius:20px;padding:6px 14px;font-size:13px;color:#7a5a30;">⚔️ PvP Forge Battle</span>
+      <span style="background:#1a0d00;border:0.5px solid #3a1a00;border-radius:20px;padding:6px 14px;font-size:13px;color:#7a5a30;">🃏 Forge Card Game</span>
+      <span style="background:#1a0d00;border:0.5px solid #3a1a00;border-radius:20px;padding:6px 14px;font-size:13px;color:#7a5a30;">🏆 Weekly Tournament</span>
+      <span style="background:#1a0d00;border:0.5px solid #3a1a00;border-radius:20px;padding:6px 14px;font-size:13px;color:#7a5a30;">🎯 Sniper Challenge</span>
+    </div>
+    <div style="font-size:13px;color:#5a3a10;">Join the arena now — early players get exclusive rewards when new games drop.</div>
+  </div>
+</section>
+
+<!-- Token -->
+<section class="token-section" id="tokenomics">
+  <div class="token-box">
+    <div class="token-label">✦ TOTAL SUPPLY ✦</div>
+    <div class="token-amount">5,000,000,000</div>
+    <div class="token-name">$FORGE</div>
+    <div class="token-divider">
+      <div class="token-divider-line"></div>
+      <span style="font-size:12px;color:#8B6914;font-weight:700;">TOKENOMICS</span>
+      <div class="token-divider-line right"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div class="token-item">
+        <div class="token-item-label">ICO Price</div>
+        <div class="token-item-val" style="color:#2ecc71;">$0.0011</div>
+      </div>
+      <div class="token-item">
+        <div class="token-item-label">Network</div>
+        <div class="token-item-val" style="color:#4d8eff;">Base Chain</div>
+      </div>
+      <div class="token-item">
+        <div class="token-item-label">Token Type</div>
+        <div class="token-item-val">ERC-20</div>
+      </div>
+      <div class="token-item">
+        <div class="token-item-label">Decimals</div>
+        <div class="token-item-val">18</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;text-align:left;">
+      <div style="font-size:10px;color:#8B6914;letter-spacing:1px;margin-bottom:4px;">DISTRIBUTION</div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:#E85D04;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;color:#ffd090;">Community & Rewards</span>
+            <span style="font-size:13px;font-weight:700;color:#E85D04;">40%</span>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;"><div style="width:40%;height:100%;background:#E85D04;border-radius:4px;"></div></div>
+          <div style="font-size:10px;color:#5a3a10;margin-top:2px;">Airdrop 25% + Game Rewards 15%</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:#2ecc71;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;color:#ffd090;">Liquidity & DEX</span>
+            <span style="font-size:13px;font-weight:700;color:#2ecc71;">30%</span>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;"><div style="width:30%;height:100%;background:#2ecc71;border-radius:4px;"></div></div>
+          <div style="font-size:10px;color:#5a3a10;margin-top:2px;">DEX listing & liquidity pool</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;color:#ffd090;">Team & Advisors</span>
+            <span style="font-size:13px;font-weight:700;color:#3b82f6;">20%</span>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;"><div style="width:20%;height:100%;background:#3b82f6;border-radius:4px;"></div></div>
+          <div style="font-size:10px;color:#5a3a10;margin-top:2px;">12-month vesting schedule</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:#a855f7;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;color:#ffd090;">Reserve</span>
+            <span style="font-size:13px;font-weight:700;color:#a855f7;">10%</span>
+          </div>
+          <div style="height:5px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;"><div style="width:10%;height:100%;background:#a855f7;border-radius:4px;"></div></div>
+          <div style="font-size:10px;color:#5a3a10;margin-top:2px;">Future development & partnerships</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Roadmap -->
+<section class="section" id="roadmap">
+  <div class="section-title">ROADMAP</div>
+  <div class="section-sub">Our journey to forge the future</div>
+  <div style="display:flex;flex-direction:column;gap:0;max-width:600px;margin:0 auto;position:relative;">
+
+    <div style="position:absolute;left:20px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#E85D04,#FFD700,#2ecc71,#7c3aed);opacity:0.3;"></div>
+
+    <!-- Phase 1 -->
+    <div style="display:flex;gap:24px;align-items:flex-start;padding-bottom:28px;">
+      <div style="width:42px;height:42px;border-radius:50%;background:#E85D04;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 0 20px rgba(232,93,4,0.6);">⚒</div>
+      <div style="background:rgba(17,8,0,0.9);border:1px solid #E85D04;border-radius:14px;padding:20px;flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:16px;font-weight:700;color:#ffd090;">Phase 1 — The Forge Opens</div>
+          <span style="background:#0a2a0a;border:0.5px solid #2ecc71;border-radius:20px;padding:3px 12px;font-size:10px;color:#2ecc71;font-weight:700;">🟢 LIVE NOW</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:13px;color:#7a5a30;">✅ Farcaster Mini App launch</div>
+          <div style="font-size:13px;color:#7a5a30;">✅ FCFS Airdrop — 5,000 slots, 1,000 $FORGE each</div>
+          <div style="font-size:13px;color:#7a5a30;">✅ OG Mystery Box — 666 limited boxes</div>
+          <div style="font-size:13px;color:#7a5a30;">✅ Forge Lottery — multi-winner ETH prizes</div>
+          <div style="font-size:13px;color:#7a5a30;">✅ Price Guess, Token Rush, Forge Quiz</div>
+          <div style="font-size:13px;color:#7a5a30;">✅ KOL Rewards — earn USDC for referrals</div>
+          <div style="font-size:13px;color:#7a5a30;">✅ Referral milestones & invite tracking</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div style="display:flex;gap:24px;align-items:flex-start;padding-bottom:28px;">
+      <div style="width:42px;height:42px;border-radius:50%;background:#FFD700;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 0 16px rgba(255,215,0,0.5);">💎</div>
+      <div style="background:rgba(17,8,0,0.9);border:1px solid #8B6914;border-radius:14px;padding:20px;flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:16px;font-weight:700;color:#ffd090;">Phase 2 — Token Presale</div>
+          <span style="background:#1a1400;border:0.5px solid #FFD700;border-radius:20px;padding:3px 12px;font-size:10px;color:#FFD700;font-weight:700;">⚡ COMING SOON</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:13px;color:#7a5a30;">🔒 $FORGE Token ICO — $0.0011 per token</div>
+          <div style="font-size:13px;color:#7a5a30;">🔒 Private presale whitelist for early supporters</div>
+          <div style="font-size:13px;color:#7a5a30;">🔒 Token distribution to airdrop holders</div>
+          <div style="font-size:13px;color:#7a5a30;">🔒 Staking program announcement</div>
+          <div style="font-size:13px;color:#7a5a30;">🔒 Forger NFT collection teaser</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div style="display:flex;gap:24px;align-items:flex-start;padding-bottom:28px;opacity:0.75;">
+      <div style="width:42px;height:42px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📈</div>
+      <div style="background:rgba(17,8,0,0.8);border:1px solid rgba(59,130,246,0.4);border-radius:14px;padding:20px;flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:16px;font-weight:700;color:#ffd090;">Phase 3 — DEX Launch & Trading</div>
+          <span style="background:#0a0a1a;border:0.5px solid #3b82f6;border-radius:20px;padding:3px 12px;font-size:10px;color:#3b82f6;font-weight:700;">Q3 2025</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:13px;color:#7a5a30;">🔮 $FORGE listed on Uniswap v3 (Base)</div>
+          <div style="font-size:13px;color:#7a5a30;">🔮 Liquidity pool launch — community LP incentives</div>
+          <div style="font-size:13px;color:#7a5a30;">🔮 Live price chart inside the app</div>
+          <div style="font-size:13px;color:#7a5a30;">🔮 Token becomes fully transferable</div>
+          <div style="font-size:13px;color:#7a5a30;">🔮 CoinGecko & CoinMarketCap listing</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div style="display:flex;gap:24px;align-items:flex-start;opacity:0.6;">
+      <div style="width:42px;height:42px;border-radius:50%;background:#a855f7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🌐</div>
+      <div style="background:rgba(17,8,0,0.8);border:1px solid rgba(168,85,247,0.3);border-radius:14px;padding:20px;flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:16px;font-weight:700;color:#ffd090;">Phase 4 — The Forge Evolves</div>
+          <span style="background:#1a0a2a;border:0.5px solid #a855f7;border-radius:20px;padding:3px 12px;font-size:10px;color:#a855f7;font-weight:700;">Q4 2025</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:13px;color:#7a5a30;">🌌 5+ new game types added</div>
+          <div style="font-size:13px;color:#7a5a30;">🌌 Forger NFT collection mint</div>
+          <div style="font-size:13px;color:#7a5a30;">🌌 $FORGE staking — earn passive rewards</div>
+          <div style="font-size:13px;color:#7a5a30;">🌌 DAO governance for token holders</div>
+          <div style="font-size:13px;color:#7a5a30;">🌌 Multi-chain expansion beyond Base</div>
+          <div style="font-size:13px;color:#7a5a30;">🌌 Mobile app (iOS & Android)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- How It Works -->
+<section class="section" id="how">
+  <div class="section-title">HOW IT WORKS</div>
+  <div class="section-sub">Three steps to start earning — takes under 2 minutes</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0;position:relative;max-width:760px;margin:0 auto;">
+
+    <div style="position:absolute;top:36px;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,#E85D04,#FFD700,#E85D04,transparent);opacity:0.4;pointer-events:none;"></div>
+
+    <div style="text-align:center;padding:24px 20px;position:relative;">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#8B2500,#E85D04);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;box-shadow:0 0 24px rgba(232,93,4,0.4);">🔗</div>
+      <div style="display:inline-block;background:#E85D04;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;margin-bottom:10px;letter-spacing:1px;">STEP 1</div>
+      <div style="font-size:17px;font-weight:700;color:#ffd090;margin-bottom:8px;">Open in Farcaster</div>
+      <div style="font-size:13px;color:#7a5a30;line-height:1.7;">Open the mini app directly from Warpcast. Your Farcaster account is all you need — no signup, no extra wallet.</div>
+    </div>
+
+    <div style="text-align:center;padding:24px 20px;position:relative;">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#5a3a00,#FFD700);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;box-shadow:0 0 24px rgba(255,215,0,0.35);">🔥</div>
+      <div style="display:inline-block;background:#FFD700;color:#000;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;margin-bottom:10px;letter-spacing:1px;">STEP 2</div>
+      <div style="font-size:17px;font-weight:700;color:#ffd090;margin-bottom:8px;">Claim Free Tokens</div>
+      <div style="font-size:13px;color:#7a5a30;line-height:1.7;">First 5,000 users get 1,000 $FORGE free. Just hit claim — pay a tiny gas fee and the tokens are yours onchain.</div>
+    </div>
+
+    <div style="text-align:center;padding:24px 20px;position:relative;">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#0a4a2a,#2ecc71);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;box-shadow:0 0 24px rgba(46,204,113,0.35);">🏆</div>
+      <div style="display:inline-block;background:#2ecc71;color:#000;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;margin-bottom:10px;letter-spacing:1px;">STEP 3</div>
+      <div style="font-size:17px;font-weight:700;color:#ffd090;margin-bottom:8px;">Play & Earn More</div>
+      <div style="font-size:13px;color:#7a5a30;line-height:1.7;">Jump into games, open OG boxes, enter the lottery, invite friends. Every action earns — the grind is the reward.</div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;margin-top:36px;">
+    <div style="display:inline-block;background:#1a0d00;border:1px solid #E85D04;border-radius:14px;padding:14px 36px;font-size:16px;font-weight:700;color:#E85D04;letter-spacing:1px;">🔒 Open Soon</div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="section-title">FAQ</div>
+  <div class="section-sub">Everything you need to know before you forge</div>
+
+  <div style="max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px;" id="faq-list">
+
+    <div class="faq-item" onclick="toggleFaq(this)" style="background:rgba(17,8,0,0.8);border:1px solid rgba(58,26,0,0.8);border-radius:14px;padding:18px 20px;cursor:pointer;transition:border-color 0.2s;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="font-size:15px;font-weight:600;color:#ffd090;">Is $FORGE a real token?</div>
+        <div class="faq-icon" style="color:#E85D04;font-size:20px;flex-shrink:0;transition:transform 0.3s;">+</div>
+      </div>
+      <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#7a5a30;line-height:1.8;">Yes. $FORGE is a real ERC-20 token deployed on Base Network. Contract: <span style="color:#ffd090;font-family:monospace;font-size:12px;">0x987D6851288e6F4798FDc7191b31b7b9513D361D</span>. It is currently non-transferable until the ICO and DEX listing — all tokens earned now will be claimable at launch.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)" style="background:rgba(17,8,0,0.8);border:1px solid rgba(58,26,0,0.8);border-radius:14px;padding:18px 20px;cursor:pointer;transition:border-color 0.2s;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="font-size:15px;font-weight:600;color:#ffd090;">How do I claim 1,000 $FORGE free?</div>
+        <div class="faq-icon" style="color:#E85D04;font-size:20px;flex-shrink:0;transition:transform 0.3s;">+</div>
+      </div>
+      <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#7a5a30;line-height:1.8;">Open the mini app on Farcaster → go to Pool tab → click "Claim 1,000 $FORGE". A small gas fee (≈$0.05 in ETH on Base) is required to process the transaction onchain. First 5,000 users only — FCFS.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)" style="background:rgba(17,8,0,0.8);border:1px solid rgba(58,26,0,0.8);border-radius:14px;padding:18px 20px;cursor:pointer;transition:border-color 0.2s;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="font-size:15px;font-weight:600;color:#ffd090;">What is Base Network?</div>
+        <div class="faq-icon" style="color:#E85D04;font-size:20px;flex-shrink:0;transition:transform 0.3s;">+</div>
+      </div>
+      <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#7a5a30;line-height:1.8;">Base is a Layer 2 blockchain built by Coinbase on top of Ethereum. It offers near-instant transactions with gas fees as low as fractions of a cent. CastForge Arena is built on Base for speed, low cost, and reliability.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)" style="background:rgba(17,8,0,0.8);border:1px solid rgba(58,26,0,0.8);border-radius:14px;padding:18px 20px;cursor:pointer;transition:border-color 0.2s;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="font-size:15px;font-weight:600;color:#ffd090;">Do I need a wallet to play?</div>
+        <div class="faq-icon" style="color:#E85D04;font-size:20px;flex-shrink:0;transition:transform 0.3s;">+</div>
+      </div>
+      <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#7a5a30;line-height:1.8;">Farcaster's built-in wallet works automatically inside the mini app — no extra setup needed. You can also connect MetaMask or any Base-compatible wallet for transactions. Your Farcaster account is your identity.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)" style="background:rgba(17,8,0,0.8);border:1px solid rgba(58,26,0,0.8);border-radius:14px;padding:18px 20px;cursor:pointer;transition:border-color 0.2s;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="font-size:15px;font-weight:600;color:#ffd090;">What is the OG Mystery Box?</div>
+        <div class="faq-icon" style="color:#E85D04;font-size:20px;flex-shrink:0;transition:transform 0.3s;">+</div>
+      </div>
+      <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#7a5a30;line-height:1.8;">A limited collection of 666 boxes, each priced at $0.666 ETH. Open one to receive a random $FORGE reward — from 2,500 (Common) up to 35,000 (Mythic). At ICO price, a Mythic box is worth $38.50. Once 666 are gone, they're gone forever.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)" style="background:rgba(17,8,0,0.8);border:1px solid rgba(58,26,0,0.8);border-radius:14px;padding:18px 20px;cursor:pointer;transition:border-color 0.2s;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <div style="font-size:15px;font-weight:600;color:#ffd090;">How does the KOL USDC program work?</div>
+        <div class="faq-icon" style="color:#E85D04;font-size:20px;flex-shrink:0;transition:transform 0.3s;">+</div>
+      </div>
+      <div class="faq-answer" style="display:none;margin-top:12px;font-size:14px;color:#7a5a30;line-height:1.8;">Invite friends using your referral link. Hit milestones to earn real USDC — starting from 0.5 USDC at 10 referrals, up to 25 USDC at 1,500 referrals. Rewards are verified manually and sent directly to your wallet.</div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.faq-item:hover{border-color:rgba(232,93,4,0.4);}
+.faq-item.open{border-color:#E85D04;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+</style>
+
+<script>
+function toggleFaq(el) {
+  const answer = el.querySelector('.faq-answer');
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.faq-answer').style.display = 'none';
+  });
+  if (!isOpen) {
+    el.classList.add('open');
+    answer.style.display = 'block';
+  }
+}
+</script>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-title">READY TO <span>FORGE</span>?</div>
+  <div class="cta-sub">Join thousands of forgers. Claim your 1,000 $FORGE free — FCFS, 5,000 slots only.</div>
+  <div class="btn-primary" style="font-size:18px;padding:18px 48px;cursor:not-allowed;opacity:0.7;" onclick="showComingSoon('App')">🔒 Claim Free $FORGE</div>
+</section>
+
+<footer>
+  <div style="margin-bottom:16px;">⚒ CastForge Arena — Built on Base</div>
+
+  <!-- Social Icons -->
+  <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
+
+    <!-- X (Twitter) -->
+    <button onclick="showComingSoon('X')" title="X (Twitter)" style="width:42px;height:42px;border-radius:12px;background:#1a0d00;border:1px solid #2a1400;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='#E85D04';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#2a1400';this.style.transform='none'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffd090"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </button>
+
+    <!-- Discord -->
+    <button onclick="showComingSoon('Discord')" title="Discord" style="width:42px;height:42px;border-radius:12px;background:#1a0d00;border:1px solid #2a1400;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='#7c3aed';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#2a1400';this.style.transform='none'">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffd090"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+    </button>
+
+    <!-- Facebook -->
+    <button onclick="showComingSoon('Facebook')" title="Facebook" style="width:42px;height:42px;border-radius:12px;background:#1a0d00;border:1px solid #2a1400;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='#1877f2';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#2a1400';this.style.transform='none'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffd090"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </button>
+
+    <!-- YouTube -->
+    <button onclick="showComingSoon('YouTube')" title="YouTube" style="width:42px;height:42px;border-radius:12px;background:#1a0d00;border:1px solid #2a1400;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='#ff0000';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#2a1400';this.style.transform='none'">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffd090"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </button>
+
+    <!-- Farcaster -->
+    <button onclick="window.open('https://farcaster.xyz/castforge','_blank')" title="Farcaster" style="width:42px;height:42px;border-radius:12px;background:#1a0d00;border:1px solid #2a1400;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='#7c3aed';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#2a1400';this.style.transform='none'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffd090"><path d="M11.763 0h.474C18.323 0 24 5.477 24 12.237v.527C24 18.523 18.523 24 11.763 24h-.527C4.777 24 0 18.523 0 12.763v-.527C0 5.477 5.477 0 11.763 0zm.237 3.9c-4.476 0-8.1 3.624-8.1 8.1s3.624 8.1 8.1 8.1 8.1-3.624 8.1-8.1-3.624-8.1-8.1-8.1zM8.4 7.8h7.2v1.8H14.1v4.8h1.5v1.8H8.4v-1.8h1.5V9.6H8.4V7.8z"/></svg>
+    </button>
+
+  </div>
+
+  <div>© 2025 CastForge Arena. All rights reserved.</div>
+</footer>
+
+<!-- Coming Soon Toast -->
+<div id="cs-toast" style="display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a0d00;border:1px solid #E85D04;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;color:#ffd090;z-index:999;white-space:nowrap;animation:fadeSlideUp 0.3s ease-out;">
+  🚧 <span id="cs-name"></span> — Coming Soon!
+</div>
+
+<script>
+function smoothTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const offset = 80;
+  const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+  window.scrollTo({ top: top, behavior: 'smooth' });
+}
+
+function showComingSoon(name) {
+  const toast = document.getElementById('cs-toast');
+  const nameEl = document.getElementById('cs-name');
+  nameEl.textContent = name;
+  toast.style.display = 'block';
+  clearTimeout(window._csTimer);
+  window._csTimer = setTimeout(() => { toast.style.display = 'none'; }, 2500);
+}
+</script>
+
+</body>
+</html>
