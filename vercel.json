@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/app",
+      "destination": "https://farcaster.xyz/miniapps/7ZcAcVmacXA9/castforge-arena",
+      "permanent": true
+    }
+  ]
+}
