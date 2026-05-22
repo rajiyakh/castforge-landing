@@ -397,6 +397,64 @@
   .stat-num{font-size:28px!important;}
 }
 </style>
+
+<style>
+.powered-by{
+  display:flex;align-items:center;gap:10px;
+  justify-content:center;
+  margin:6px 0 10px;
+}
+.powered-line{
+  flex:1;max-width:60px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(138,99,210,0.5));
+}
+.powered-line:last-child{
+  background:linear-gradient(90deg,rgba(138,99,210,0.5),transparent);
+}
+.powered-text{
+  font-size:9px;font-weight:700;
+  letter-spacing:2.5px;
+  color:rgba(138,99,210,0.7);
+}
+.farcaster-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(138,99,210,0.1);
+  border:1px solid rgba(138,99,210,0.35);
+  border-radius:40px;
+  padding:8px 20px 8px 12px;
+  margin-bottom:32px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.3s, box-shadow 0.3s;
+}
+.farcaster-badge::before{
+  content:'';position:absolute;
+  top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(138,99,210,0.15),transparent);
+  animation:shimLine 2.5s linear infinite;
+}
+.farcaster-badge:hover{
+  border-color:rgba(138,99,210,0.7);
+  box-shadow:0 0 20px rgba(138,99,210,0.2);
+}
+.farcaster-name{
+  font-size:16px;font-weight:700;
+  color:#a78bfa;
+  letter-spacing:0.5px;
+}
+.farcaster-mini{
+  font-size:10px;font-weight:700;
+  letter-spacing:1.5px;
+  color:rgba(138,99,210,0.6);
+  background:rgba(138,99,210,0.15);
+  border-radius:20px;
+  padding:2px 8px;
+  border:0.5px solid rgba(138,99,210,0.3);
+}
+@media(max-width:600px){
+  .farcaster-name{font-size:14px;}
+  .farcaster-badge{padding:7px 16px 7px 10px;}
+}
+</style>
 </head>
 <body>
 
@@ -467,6 +525,7 @@
     <span class="nav-link games" onclick="smoothTo('features')">Games</span>
     <span class="nav-link tokenomics" onclick="smoothTo('tokenomics')">Tokenomics</span>
     <span class="nav-link roadmap" onclick="smoothTo('roadmap')">Roadmap</span>
+    <span class="nav-link" onclick="smoothTo('partners')" style="color:#FFD700;font-weight:700;">Partners</span>
   </div>
 
   <div class="nav-right">
@@ -627,6 +686,21 @@
       ARENA
     </h1>
     <p class="hero-sub">Play. Earn. Forge your legacy on Base.</p>
+    <div class="powered-by">
+      <span class="powered-line"></span>
+      <span class="powered-text">POWERED BY</span>
+      <span class="powered-line"></span>
+    </div>
+    <div class="farcaster-badge">
+      <svg width="22" height="22" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1000" height="1000" rx="200" fill="#8A63D2"/>
+        <path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z" fill="white"/>
+        <path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z" fill="white"/>
+        <path d="M675.556 746.667C663.283 746.667 653.333 756.616 653.333 768.889V795.556H648.889C636.616 795.556 626.667 805.505 626.667 817.778V844.444H875.556V817.778C875.556 805.505 865.606 795.556 853.333 795.556H848.889V768.889C848.889 756.616 838.94 746.667 826.667 746.667V351.111H851.111L880 253.333H702.222V746.667H675.556Z" fill="white"/>
+      </svg>
+      <span class="farcaster-name">Farcaster</span>
+      <span class="farcaster-mini">Mini App</span>
+    </div>
     <div class="hero-btns">
       <div class="btn-primary" style="cursor:not-allowed;opacity:0.7;" onclick="showComingSoon('Arena')">🔒 Enter The Arena</div>
       <span class="btn-secondary" onclick="smoothTo('features')" style="cursor:pointer;">Learn More</span>
@@ -771,6 +845,140 @@
       <span style="background:#1a0d00;border:0.5px solid #3a1a00;border-radius:20px;padding:6px 14px;font-size:13px;color:#7a5a30;">🎯 Sniper Challenge</span>
     </div>
     <div style="font-size:13px;color:#5a3a10;">Join the arena now — early players get exclusive rewards when new games drop.</div>
+  </div>
+</section>
+
+
+<!-- Partners -->
+<section class="section" id="partners">
+  <div class="section-title">BUILT ON & POWERED BY</div>
+  <div class="section-sub">The infrastructure and ecosystem behind CastForge Arena</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:32px;">
+
+    <!-- Base Network -->
+    <div style="background:rgba(17,8,0,0.8);border:1px solid rgba(0,82,255,0.3);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;transition:border-color 0.3s;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#0052FF,transparent);"></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:#0052FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="24" height="24" viewBox="0 0 111 111" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M54.921 110.034C85.359 110.034 110.034 85.402 110.034 55.017C110.034 24.632 85.359 0 54.921 0C26.154 0 2.547 22.015 0 50.116H72.764V59.928H0C2.61 87.977 26.193 110.034 54.921 110.034Z" fill="white"/></svg>
+        </div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#ffd090;">Base Network</div>
+          <div style="font-size:10px;color:#0052FF;font-weight:700;letter-spacing:1px;">CORE INFRASTRUCTURE</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#7a5a30;line-height:1.6;">CastForge Arena is fully deployed on Base — Coinbase's L2 chain. Fast, cheap, and built for mainstream adoption.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <span style="background:rgba(0,82,255,0.1);border:0.5px solid rgba(0,82,255,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#4d8eff;font-weight:600;">Layer 2</span>
+        <span style="background:rgba(0,82,255,0.1);border:0.5px solid rgba(0,82,255,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#4d8eff;font-weight:600;">EVM Compatible</span>
+        <span style="background:rgba(0,82,255,0.1);border:0.5px solid rgba(0,82,255,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#4d8eff;font-weight:600;">Low Fees</span>
+      </div>
+    </div>
+
+    <!-- Farcaster -->
+    <div style="background:rgba(17,8,0,0.8);border:1px solid rgba(138,99,210,0.3);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#8A63D2,transparent);"></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:#8A63D2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 1000 1000" fill="none"><rect width="1000" height="1000" rx="200" fill="#8A63D2"/><path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z" fill="white"/><path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z" fill="white"/><path d="M675.556 746.667C663.283 746.667 653.333 756.616 653.333 768.889V795.556H648.889C636.616 795.556 626.667 805.505 626.667 817.778V844.444H875.556V817.778C875.556 805.505 865.606 795.556 853.333 795.556H848.889V768.889C848.889 756.616 838.94 746.667 826.667 746.667V351.111H851.111L880 253.333H702.222V746.667H675.556Z" fill="white"/></svg>
+        </div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#ffd090;">Farcaster</div>
+          <div style="font-size:10px;color:#8A63D2;font-weight:700;letter-spacing:1px;">MINI APP PLATFORM</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#7a5a30;line-height:1.6;">CastForge runs natively as a Farcaster Mini App — reaching millions of crypto-native users where they already are.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <span style="background:rgba(138,99,210,0.1);border:0.5px solid rgba(138,99,210,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#a78bfa;font-weight:600;">Social Protocol</span>
+        <span style="background:rgba(138,99,210,0.1);border:0.5px solid rgba(138,99,210,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#a78bfa;font-weight:600;">Mini App</span>
+        <span style="background:rgba(138,99,210,0.1);border:0.5px solid rgba(138,99,210,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#a78bfa;font-weight:600;">Crypto Native</span>
+      </div>
+    </div>
+
+    <!-- Community -->
+    <div style="background:rgba(17,8,0,0.8);border:1px solid rgba(232,93,4,0.3);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#E85D04,transparent);"></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#8B2500,#E85D04);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">⚒</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#ffd090;">Community Backed</div>
+          <div style="font-size:10px;color:#E85D04;font-weight:700;letter-spacing:1px;">GRASSROOTS POWERED</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#7a5a30;line-height:1.6;">Not VC-funded hype. Real people, real belief. The Forgers showed up before the world knew our name.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <span style="background:rgba(232,93,4,0.1);border:0.5px solid rgba(232,93,4,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#E85D04;font-weight:600;">🔥 Early Believers</span>
+        <span style="background:rgba(232,93,4,0.1);border:0.5px solid rgba(232,93,4,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#E85D04;font-weight:600;">⚒ OG Forgers</span>
+        <span style="background:rgba(232,93,4,0.1);border:0.5px solid rgba(232,93,4,0.3);border-radius:20px;padding:3px 10px;font-size:10px;color:#FFD700;font-weight:600;">✦ Community First</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Funds Raised -->
+  <div style="background:linear-gradient(135deg,rgba(17,8,0,0.98),rgba(26,13,0,0.98));border:1px solid rgba(167,139,250,0.25);border-radius:16px;padding:28px 32px;margin-bottom:16px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#a78bfa,#E85D04,transparent);"></div>
+
+    <div style="font-size:10px;color:#8B6914;letter-spacing:2.5px;font-weight:700;margin-bottom:16px;">✦ SEED ROUND</div>
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:20px;">
+      <div>
+        <div style="font-size:34px;font-weight:900;color:#ffd090;line-height:1;">Raising Our First Round</div>
+        <div style="font-size:13px;color:#7a5a30;margin-top:6px;">Target set. Strategy clear. Looking for the right partners to forge the future.</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="background:rgba(17,8,0,0.8);border:0.5px solid rgba(58,26,0,0.8);border-radius:10px;padding:10px 16px;text-align:center;">
+          <div style="font-size:10px;color:#7a5a30;margin-bottom:3px;">Stage</div>
+          <div style="font-size:14px;font-weight:700;color:#ffd090;">Pre-seed</div>
+        </div>
+        <div style="background:rgba(17,8,0,0.8);border:0.5px solid rgba(58,26,0,0.8);border-radius:10px;padding:10px 16px;text-align:center;">
+          <div style="font-size:10px;color:#7a5a30;margin-bottom:3px;">Round</div>
+          <div style="font-size:14px;font-weight:700;color:#2ecc71;">Seed — Open</div>
+        </div>
+        <div style="background:rgba(17,8,0,0.8);border:0.5px solid rgba(58,26,0,0.8);border-radius:10px;padding:10px 16px;text-align:center;">
+          <div style="font-size:10px;color:#7a5a30;margin-bottom:3px;">Target</div>
+          <div style="font-size:14px;font-weight:700;color:#FFD700;">$250,000</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:11px;color:#7a5a30;">Round in progress · Strategic backers only</span>
+      <span style="font-size:11px;font-weight:700;color:#a78bfa;">35% committed</span>
+    </div>
+    <div style="height:7px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;margin-bottom:20px;">
+      <div class="raise-bar-fill" style="width:0%;height:100%;background:linear-gradient(90deg,#a78bfa,#E85D04);border-radius:4px;transition:width 1.5s ease;"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="background:rgba(167,139,250,0.1);border:0.5px solid rgba(167,139,250,0.3);border-radius:20px;padding:4px 12px;font-size:10px;color:#a78bfa;font-weight:700;">Base Ecosystem Focus</span>
+      <span style="background:rgba(232,93,4,0.1);border:0.5px solid rgba(232,93,4,0.3);border-radius:20px;padding:4px 12px;font-size:10px;color:#E85D04;font-weight:700;">Strategic Backers Only</span>
+      <span style="background:rgba(46,204,113,0.1);border:0.5px solid rgba(46,204,113,0.3);border-radius:20px;padding:4px 12px;font-size:10px;color:#2ecc71;font-weight:700;">Round Open</span>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var bars = document.querySelectorAll('.raise-bar-fill');
+    setTimeout(function(){
+      bars.forEach(function(b){ b.style.width='35%'; });
+    }, 600);
+  })();
+  </script>
+
+  <!-- Seeking investment banner -->
+  <div style="background:linear-gradient(135deg,rgba(26,13,0,0.95),rgba(17,8,0,0.95));border:1px solid rgba(255,215,0,0.2);border-radius:16px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#FFD700,transparent);"></div>
+    <div>
+      <div style="font-size:11px;color:#8B6914;letter-spacing:2px;font-weight:700;margin-bottom:6px;">OPEN FOR INVESTMENT</div>
+      <div style="font-size:20px;font-weight:700;color:#ffd090;margin-bottom:4px;">Seeking Strategic Investors & Partners</div>
+      <div style="font-size:13px;color:#7a5a30;">Seed round open. Base ecosystem focus. KOL program live.</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="https://forms.gle/tvikqzJyMKDGbLi19" target="_blank" style="background:linear-gradient(90deg,#8B2500,#E85D04);color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;">Get in Touch</a>
+      <a href="https://farcaster.xyz/castforge" target="_blank" style="background:transparent;border:1px solid rgba(232,93,4,0.5);color:#E85D04;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;">Follow on Farcaster</a>
+    </div>
   </div>
 </section>
 
@@ -1076,7 +1284,7 @@ function toggleFaq(el) {
   <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
 
     <!-- X (Twitter) -->
-    <button onclick="showComingSoon('X')" title="X (Twitter)" style="width:42px;height:42px;border-radius:12px;background:#1a0d00;border:1px solid #2a1400;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='#E85D04';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#2a1400';this.style.transform='none'">
+    <button onclick="window.open('https://x.com/castforgearena','_blank')" title="X (Twitter)" style="width:42px;height:42px;border-radius:12px;background:#1a0d00;border:1px solid #2a1400;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='#E85D04';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='#2a1400';this.style.transform='none'">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="#ffd090"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
     </button>
 
