@@ -62,6 +62,53 @@
   @keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
   @keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
   @keyframes fadeSlideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+  /* Glitch effect on hero title */
+  .hero-title{
+    position:relative;
+    display:inline-block;
+  }
+  .hero-title::before,
+  .hero-title::after{
+    content:attr(data-text);
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:inherit;
+    line-height:0.9;
+    letter-spacing:inherit;
+  }
+  .hero-title::before{
+    color:#E85D04;
+    animation:glitch-top 5s infinite;
+    clip-path:polygon(0 0,100% 0,100% 40%,0 40%);
+    left:0;top:0;
+  }
+  .hero-title::after{
+    color:#FFD700;
+    animation:glitch-bottom 5s infinite;
+    clip-path:polygon(0 60%,100% 60%,100% 100%,0 100%);
+    left:0;top:0;
+  }
+  @keyframes glitch-top{
+    0%,88%,100%{transform:translate(0);opacity:0;}
+    89%{transform:translate(-3px,-2px);opacity:0.8;}
+    90%{transform:translate(3px,2px);opacity:0;}
+    91%{transform:translate(-4px,1px);opacity:0.9;}
+    92%{transform:translate(0);opacity:0;}
+    93%{transform:translate(4px,-1px);opacity:0.7;}
+    94%{transform:translate(0);opacity:0;}
+  }
+  @keyframes glitch-bottom{
+    0%,86%,100%{transform:translate(0);opacity:0;}
+    87%{transform:translate(3px,2px);opacity:0.8;}
+    88%{transform:translate(-3px,-2px);opacity:0;}
+    89%{transform:translate(4px,-1px);opacity:0.9;}
+    90%{transform:translate(0);opacity:0;}
+    91%{transform:translate(-4px,1px);opacity:0.7;}
+    92%{transform:translate(0);opacity:0;}
+  }
   @keyframes goldGlow{0%,100%{text-shadow:0 0 20px rgba(255,215,0,0.3)}50%{text-shadow:0 0 40px rgba(255,215,0,0.7),0 0 80px rgba(232,93,4,0.3)}}
 
   /* Nav */
@@ -314,6 +361,69 @@
   @keyframes heroCyberGlow{0%,100%{opacity:0.5;text-shadow:none}50%{opacity:1;text-shadow:0 0 10px #00ffff,0 0 20px #0088ff,0 0 40px #00ffff44}}
   @keyframes heroCyberDot{0%,100%{opacity:0.2}50%{opacity:1;text-shadow:0 0 8px #00ffff}}
   @keyframes heroCyberSpark{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.3);text-shadow:0 0 12px #00ffff,0 0 24px #0088ff}}
+
+  /* ===== ANIMATED NEON BORDER ON CARDS ===== */
+  .feature-card,
+  .token-item,
+  .faq-item,
+  .roadmap-phase {
+    position: relative;
+    z-index: 0;
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+  .feature-card::before,
+  .token-item::before,
+  .faq-item::before,
+  .roadmap-phase::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #E85D04, #FFD700, #8A63D2, #E85D04);
+    background-size: 300%;
+    animation: borderRotate 3s linear infinite;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feature-card:hover::before,
+  .token-item:hover::before,
+  .faq-item:hover::before,
+  .roadmap-phase:hover::before {
+    opacity: 1;
+  }
+  .feature-card:hover,
+  .token-item:hover,
+  .faq-item:hover,
+  .roadmap-phase:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(232,93,4,0.2), 0 0 40px rgba(255,215,0,0.08);
+  }
+  @keyframes borderRotate {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* ===== 3D TILT EFFECT ===== */
+  .feature-card,
+  .token-item,
+  .faq-item,
+  .roadmap-phase {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .feature-card .shine,
+  .token-item .shine,
+  .faq-item .shine,
+  .roadmap-phase .shine {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 1;
+  }
   /* ===== RESPONSIVE ===== */
   @media(max-width:960px){
     .hero{gap:24px;padding:100px 20px 50px;}
@@ -455,6 +565,38 @@
   .farcaster-badge{padding:7px 16px 7px 10px;}
 }
 </style>
+
+<style>
+/* ===== PARALLAX LAYERS ===== */
+.par-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+#par-embers { z-index: 0; }
+#par-blobs  { z-index: 0; }
+#par-grid   {
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(232,93,4,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,93,4,0.03) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.par-ember {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #E85D04, transparent);
+  opacity: 0.12;
+}
+.par-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.07;
+}
+</style>
 </head>
 <body>
 
@@ -541,7 +683,7 @@
         Follow
       </a>
     </div>
-    <div class="nav-cta" style="cursor:not-allowed;opacity:0.8;" onclick="showComingSoon('App')">🔒 Open App</div>
+    <div class="nav-cta" style="cursor:not-allowed;opacity:0.8;" onclick="showComingSoon('App');fireConfetti(event)">🔒 Open App</div>
     <button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd090" stroke-width="2" stroke-linecap="round">
         <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
@@ -550,42 +692,7 @@
   </div>
 </nav>
 
-<!-- Cyber Presale Bar -->
-<div style="background:#00080f;border-top:1px solid rgba(0,255,255,0.25);border-bottom:1px solid rgba(0,255,255,0.25);overflow:hidden;padding:9px 0;position:sticky;top:62px;z-index:99;margin-top:-1px;">
-  <div style="display:flex;animation:heroCyberScroll 22s linear infinite;width:max-content;">
-    <div style="display:flex;align-items:center;gap:20px;padding:0 32px;white-space:nowrap;font-family:monospace;">
-      <span style="color:#00ffff;font-size:12px;animation:heroCyberDot 0.8s infinite;">▶</span>
-      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:4px;animation:heroCyberGlow 1.5s ease-in-out infinite;">$FORGE PRESALE</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:12px;font-weight:700;color:#FFD700;letter-spacing:2px;animation:heroCyberGlow 1.5s ease-in-out infinite 0.3s;">SPOTS FILLING FAST</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:12px;color:#005566;letter-spacing:1px;">WHITELIST_OPENING_SOON</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:4px;animation:heroCyberGlow 1.5s ease-in-out infinite 0.6s;">SECURE YOUR SPOT</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="color:#00ffff;font-size:12px;animation:heroCyberDot 0.8s infinite 0.4s;">▶</span>
-      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:4px;animation:heroCyberGlow 1.5s ease-in-out infinite 0.9s;">$FORGE PRESALE</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:12px;font-weight:700;color:#FFD700;letter-spacing:2px;animation:heroCyberGlow 1.5s ease-in-out infinite 1.2s;">SPOTS FILLING FAST</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:12px;color:#005566;letter-spacing:1px;">WHITELIST_OPENING_SOON</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:4px;animation:heroCyberGlow 1.5s ease-in-out infinite 1.5s;">SECURE YOUR SPOT</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:20px;padding:0 32px;white-space:nowrap;font-family:monospace;">
-      <span style="color:#00ffff;font-size:12px;animation:heroCyberDot 0.8s infinite;">▶</span>
-      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:4px;animation:heroCyberGlow 1.5s ease-in-out infinite;">$FORGE PRESALE</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:12px;font-weight:700;color:#FFD700;letter-spacing:2px;animation:heroCyberGlow 1.5s ease-in-out infinite 0.3s;">SPOTS FILLING FAST</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:12px;color:#005566;letter-spacing:1px;">WHITELIST_OPENING_SOON</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-      <span style="font-size:13px;font-weight:800;color:#00ffff;letter-spacing:4px;animation:heroCyberGlow 1.5s ease-in-out infinite 0.6s;">SECURE YOUR SPOT</span>
-      <span style="font-size:12px;color:#003344;">◈</span>
-    </div>
-  </div>
-</div>
+
 
 <!-- Mobile menu -->
 <div class="mobile-menu" id="mobile-menu">
@@ -622,12 +729,12 @@
 }
 .phone-wrap.left .phone-frame{
   animation-delay:0s;
-  transform:rotate(-3deg);
+  transform:rotate(-3deg) translateX(90px);
   box-shadow:0 8px 40px rgba(232,93,4,0.18);
 }
 .phone-wrap.right .phone-frame{
   animation-delay:1s;
-  transform:rotate(3deg);
+  transform:rotate(3deg) translateX(-90px);
   box-shadow:0 8px 40px rgba(255,215,0,0.12);
 }
 .phone-wrap.left .phone-frame:hover,
@@ -667,6 +774,8 @@
 }
 </style>
 
+
+
 <!-- Hero -->
 <section class="hero">
   <div class="phone-wrap left">
@@ -680,12 +789,46 @@
   </div>
 
   <div class="hero-center">
-    <h1 class="hero-title">
-      <span class="fire">CAST</span><br>
-      <span class="gold">FORGE</span><br>
+    <h1 class="hero-title" data-text="CASTFORGE ARENA">
+      <span class="fire">CAST</span><span class="gold">FORGE</span><br>
       ARENA
     </h1>
-    <p class="hero-sub">Play. Earn. Forge your legacy on Base.</p>
+    <p class="hero-sub"><span id="tw-text"></span><span style="display:inline;border-right:2px solid #E85D04;margin-left:1px;animation:twCursor 0.7s ease-in-out infinite;">&nbsp;</span></p>
+
+<style>
+@keyframes twCursor{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+
+<script>
+(function(){
+  const lines = [
+    'Play. Earn. Forge your legacy on Base.',
+    'The first gaming arena on Farcaster.',
+    'Claim 1,000 $FORGE — free for early birds.',
+    'Built on Base. Powered by community.',
+  ];
+  const el = document.getElementById('tw-text');
+  let li = 0, ci = 0, deleting = false;
+  function tick() {
+    const line = lines[li];
+    if (!deleting) {
+      el.textContent = line.slice(0, ++ci);
+      if (ci === line.length) {
+        setTimeout(() => { deleting = true; tick(); }, 2400);
+        return;
+      }
+    } else {
+      el.textContent = line.slice(0, --ci);
+      if (ci === 0) {
+        deleting = false;
+        li = (li + 1) % lines.length;
+      }
+    }
+    setTimeout(tick, deleting ? 38 : 65);
+  }
+  tick();
+})();
+</script>
     <div class="powered-by">
       <span class="powered-line"></span>
       <span class="powered-text">POWERED BY</span>
@@ -702,9 +845,13 @@
       <span class="farcaster-mini">Mini App</span>
     </div>
     <div class="hero-btns">
-      <div class="btn-primary" style="cursor:not-allowed;opacity:0.7;" onclick="showComingSoon('Arena')">🔒 Enter The Arena</div>
+      <div class="btn-primary" style="cursor:not-allowed;opacity:0.7;" onclick="showComingSoon('Arena');fireConfetti(event)">🔒 Enter The Arena</div>
       <span class="btn-secondary" onclick="smoothTo('features')" style="cursor:pointer;">Learn More</span>
     </div>
+    <div style="margin-top:14px;">
+      <div class="btn-primary" style="font-size:15px;padding:13px 32px;cursor:not-allowed;opacity:0.7;background:linear-gradient(90deg,#3b0764,#7c3aed);" onclick="showComingSoon('App');fireConfetti(event)">🔒 Claim Free $FORGE</div>
+    </div>
+
   </div>
 
   <div class="phone-wrap right">
@@ -945,7 +1092,7 @@
 
     <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
       <span style="font-size:11px;color:#7a5a30;">Round in progress · Strategic backers only</span>
-      <span style="font-size:11px;font-weight:700;color:#a78bfa;">35% committed</span>
+      <span style="font-size:11px;font-weight:700;color:#a78bfa;">79% committed</span>
     </div>
     <div style="height:7px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;margin-bottom:20px;">
       <div class="raise-bar-fill" style="width:0%;height:100%;background:linear-gradient(90deg,#a78bfa,#E85D04);border-radius:4px;transition:width 1.5s ease;"></div>
@@ -962,7 +1109,7 @@
   (function(){
     var bars = document.querySelectorAll('.raise-bar-fill');
     setTimeout(function(){
-      bars.forEach(function(b){ b.style.width='35%'; });
+      bars.forEach(function(b){ b.style.width='79%'; });
     }, 600);
   })();
   </script>
@@ -1274,7 +1421,7 @@ function toggleFaq(el) {
 <section class="cta-section">
   <div class="cta-title">READY TO <span>FORGE</span>?</div>
   <div class="cta-sub">Join thousands of forgers. Claim your 1,000 $FORGE free — FCFS, 5,000 slots only.</div>
-  <div class="btn-primary" style="font-size:18px;padding:18px 48px;cursor:not-allowed;opacity:0.7;" onclick="showComingSoon('App')">🔒 Claim Free $FORGE</div>
+  <div class="btn-primary" style="font-size:18px;padding:18px 48px;cursor:not-allowed;opacity:0.7;" onclick="showComingSoon('App');fireConfetti(event)">🔒 Claim Free $FORGE</div>
 </section>
 
 <footer>
@@ -1337,5 +1484,373 @@ function showComingSoon(name) {
 }
 </script>
 
+
+<script>
+// 3D Tilt effect on all cards
+(function(){
+  function applyTilt(selector) {
+    document.querySelectorAll(selector).forEach(card => {
+      // add shine div if not present
+      if (!card.querySelector('.shine')) {
+        const shine = document.createElement('div');
+        shine.className = 'shine';
+        card.style.position = 'relative';
+        card.style.overflow = 'hidden';
+        card.appendChild(shine);
+      }
+      card.addEventListener('mousemove', function(e) {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        const rotX = ((y - cy) / cy) * -10;
+        const rotY = ((x - cx) / cx) * 10;
+        card.style.transform = 'perspective(800px) rotateX('+rotX+'deg) rotateY('+rotY+'deg) scale(1.03)';
+        card.style.transition = 'transform 0.1s ease';
+        const shine = card.querySelector('.shine');
+        if (shine) {
+          shine.style.background = 'radial-gradient(circle at '+x+'px '+y+'px, rgba(255,200,100,0.10), transparent 65%)';
+          shine.style.opacity = '1';
+        }
+      });
+      card.addEventListener('mouseleave', function() {
+        card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale(1)';
+        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
+        const shine = card.querySelector('.shine');
+        if (shine) shine.style.opacity = '0';
+      });
+    });
+  }
+  window.addEventListener('DOMContentLoaded', function(){
+    applyTilt('.feature-card');
+    applyTilt('.token-item');
+    applyTilt('.faq-item');
+    applyTilt('.roadmap-phase');
+  });
+})();
+</script>
+
+<style>
+* { cursor: none !important; }
+</style>
+<div id="hammer-cursor" style="position:fixed;pointer-events:none;z-index:99999;font-size:28px;transform:translate(-20%,-80%) rotate(-30deg);filter:drop-shadow(0 0 8px #E85D04) drop-shadow(0 0 16px rgba(232,93,4,0.5));transition:transform 0.05s;display:none;">🔨</div>
+
+<script>
+(function(){
+  const cur = document.getElementById('hammer-cursor');
+
+  document.addEventListener('mousemove', e => {
+    cur.style.display = 'block';
+    cur.style.left = e.clientX + 'px';
+    cur.style.top = e.clientY + 'px';
+    if (Math.random() > 0.4) spawnSpark(e.clientX, e.clientY, false);
+  });
+
+  document.addEventListener('mouseleave', () => { cur.style.display = 'none'; });
+  document.addEventListener('mouseenter', () => { cur.style.display = 'block'; });
+
+  document.addEventListener('click', e => {
+    // Strike animation
+    cur.style.transform = 'translate(-20%,-50%) rotate(20deg)';
+    setTimeout(() => { cur.style.transform = 'translate(-20%,-80%) rotate(-30deg)'; }, 120);
+    // Impact ring
+    const ring = document.createElement('div');
+    ring.style.cssText = `position:fixed;pointer-events:none;z-index:99997;border-radius:50%;border:2px solid #E85D04;left:${e.clientX}px;top:${e.clientY}px;width:0;height:0;transform:translate(-50%,-50%);animation:impactRing 0.4s ease-out forwards;`;
+    document.body.appendChild(ring);
+    setTimeout(() => ring.remove(), 400);
+    // Burst sparks
+    for (let i = 0; i < 12; i++) spawnSpark(e.clientX, e.clientY, true);
+  });
+
+  function spawnSpark(x, y, burst) {
+    const p = document.createElement('div');
+    const colors = ['#E85D04','#FFD700','#ff6600','#fff'];
+    const angle = Math.random() * Math.PI * 2;
+    const dist = burst ? (Math.random()*50+20) : (Math.random()*14+4);
+    const tx = Math.cos(angle)*dist;
+    const ty = Math.sin(angle)*dist - (burst?25:10);
+    p.style.cssText = `
+      position:fixed;pointer-events:none;z-index:99998;border-radius:50%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${Math.random()*4+2}px;height:${Math.random()*4+2}px;
+      left:${x+(Math.random()-0.5)*10}px;top:${y+(Math.random()-0.5)*10}px;
+      animation:sparkOut 0.6s ease-out forwards;
+      --tx:${tx}px;--ty:${ty}px;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 600);
+  }
+})();
+</script>
+
+<style>
+@keyframes impactRing {
+  0%   { width:0;height:0;opacity:1; }
+  100% { width:60px;height:60px;opacity:0; }
+}
+@keyframes sparkOut {
+  0%   { opacity:1; transform:translate(0,0) scale(1); }
+  100% { opacity:0; transform:translate(var(--tx),var(--ty)) scale(0.1); }
+}
+@keyframes hammerBob {
+  0%,100% { transform:translate(-20%,-80%) rotate(-30deg); }
+  50%      { transform:translate(-20%,-88%) rotate(-24deg); }
+}
+#hammer-cursor { animation: hammerBob 0.9s ease-in-out infinite; }
+</style>
+
+<script>
+// ===== PARALLAX BACKGROUND =====
+(function(){
+  // Create layers
+  const embers = document.createElement('div');
+  embers.id = 'par-embers';
+  embers.className = 'par-layer';
+
+  const blobs = document.createElement('div');
+  blobs.id = 'par-blobs';
+  blobs.className = 'par-layer';
+
+  const grid = document.createElement('div');
+  grid.id = 'par-grid';
+  grid.className = 'par-layer';
+
+  // Generate embers
+  for (let i = 0; i < 50; i++) {
+    const e = document.createElement('div');
+    e.className = 'par-ember';
+    const size = Math.random()*8+2;
+    e.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*200}%;left:${Math.random()*100}%;`;
+    embers.appendChild(e);
+  }
+
+  // Generate blobs
+  const blobData = [
+    {w:400,h:400,bg:'#E85D04',top:'5%',left:'5%'},
+    {w:350,h:350,bg:'#FFD700',top:'40%',right:'5%'},
+    {w:300,h:300,bg:'#8A63D2',top:'70%',left:'40%'},
+    {w:250,h:250,bg:'#E85D04',top:'90%',left:'10%'},
+  ];
+  blobData.forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'par-blob';
+    el.style.cssText = `width:${b.w}px;height:${b.h}px;background:${b.bg};top:${b.top};${b.right?'right:'+b.right:'left:'+b.left};`;
+    blobs.appendChild(el);
+  });
+
+  document.body.prepend(grid);
+  document.body.prepend(blobs);
+  document.body.prepend(embers);
+
+  // Scroll parallax
+  window.addEventListener('scroll', () => {
+    const sy = window.scrollY;
+    embers.style.transform = `translateY(${sy * 0.08}px)`;
+    blobs.style.transform  = `translateY(${sy * 0.2}px)`;
+    grid.style.transform   = `translateY(${sy * 0.35}px)`;
+  }, { passive: true });
+})();
+</script>
+
+<!-- Back to Top -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="
+  position:fixed;bottom:28px;right:24px;
+  width:46px;height:46px;border-radius:50%;
+  background:linear-gradient(135deg,#8B2500,#E85D04);
+  border:1px solid rgba(232,93,4,0.5);
+  color:#fff;font-size:20px;
+  cursor:pointer;z-index:9999;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 0 16px rgba(232,93,4,0.35);
+  transition:transform 0.2s,box-shadow 0.2s;
+" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 0 28px rgba(232,93,4,0.6)'"
+  onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 0 16px rgba(232,93,4,0.35)'"
+  title="Back to top">⚒</button>
+
+<script>
+(function(){
+  const btn = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  }, { passive: true });
+})();
+</script>
+
+
+
+<script>
+function fireConfetti(e) {
+  const colors = ['#E85D04','#FFD700','#ff6600','#ff4500','#ffa040','#fff','#c94d00'];
+  const shapes = ['⬛','🔶','🔸','▲','◆','🔥','⚡','✦','⬟'];
+  const cx = e.clientX, cy = e.clientY;
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.style.position = 'fixed';
+    p.style.pointerEvents = 'none';
+    p.style.zIndex = '99999';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 200;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist - (Math.random() * 100 + 50);
+    const rot = (Math.random() - 0.5) * 720;
+    const delay = Math.random() * 0.3;
+    const dur = 0.6 + Math.random() * 0.8;
+    const size = 8 + Math.random() * 14;
+    if (Math.random() > 0.5) {
+      p.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+      p.style.fontSize = size + 'px';
+    } else {
+      p.style.width = (size * 0.6) + 'px';
+      p.style.height = (size * 0.3) + 'px';
+      p.style.borderRadius = '2px';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    }
+    p.style.left = cx + 'px';
+    p.style.top = cy + 'px';
+    p.style.opacity = '0';
+    p.style.animation = `cfFall ${dur}s ease-in ${delay}s forwards`;
+    p.style.setProperty('--cx', tx + 'px');
+    p.style.setProperty('--cy', ty + 'px');
+    p.style.setProperty('--cr', rot + 'deg');
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), (dur + delay) * 1000 + 100);
+  }
+}
+</script>
+<style>
+@keyframes cfFall{
+  0%  {opacity:1;transform:translate(0,0) rotate(0deg) scale(1);}
+  100%{opacity:0;transform:translate(var(--cx),var(--cy)) rotate(var(--cr)) scale(0.3);}
+}
+</style>
+
+<!-- 1. Floating Fire Particles -->
+<canvas id="fire-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.5;"></canvas>
+<script>
+(function(){
+  const canvas = document.getElementById('fire-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+  const particles = [];
+  const colors = ['#E85D04','#FFD700','#ff6600','#ff4500','#ffa040','#c94d00'];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2.5 + 0.5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: -(Math.random() * 0.6 + 0.2),
+      alpha: Math.random() * 0.6 + 0.2,
+      life: Math.random(),
+    });
+  }
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 0.004;
+      if (p.life <= 0 || p.y < -10) {
+        p.x = Math.random() * canvas.width;
+        p.y = canvas.height + 10;
+        p.life = 1;
+        p.r = Math.random() * 2.5 + 0.5;
+        p.vx = (Math.random() - 0.5) * 0.4;
+        p.vy = -(Math.random() * 0.6 + 0.2);
+      }
+      ctx.save();
+      ctx.globalAlpha = p.life * p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>
+
+<!-- 2. Share on Farcaster + Referral -->
+<style>
+.share-bar{
+  position:fixed;bottom:28px;right:24px;
+  display:flex;flex-direction:column;gap:8px;
+  z-index:9997;
+}
+.share-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;border-radius:12px;
+  font-size:12px;font-weight:700;
+  cursor:pointer;border:none;
+  transition:transform 0.15s,box-shadow 0.2s;
+  letter-spacing:0.5px;
+  white-space:nowrap;
+}
+.share-btn:hover{transform:scale(1.05);}
+.share-farcaster{
+  background:#8A63D2;color:#fff;
+  box-shadow:0 4px 16px rgba(138,99,210,0.3);
+}
+.share-farcaster:hover{box-shadow:0 4px 24px rgba(138,99,210,0.5);}
+.share-copy{
+  background:rgba(17,8,0,0.95);
+  color:#FFD700;
+  border:1px solid rgba(255,215,0,0.3) !important;
+  box-shadow:0 4px 16px rgba(255,215,0,0.1);
+}
+.share-copy:hover{box-shadow:0 4px 24px rgba(255,215,0,0.25);}
+.copy-toast{
+  position:fixed;bottom:100px;right:24px;
+  background:#2ecc71;color:#fff;
+  padding:8px 16px;border-radius:8px;
+  font-size:12px;font-weight:700;
+  z-index:9999;
+  opacity:0;transform:translateY(8px);
+  transition:opacity 0.3s,transform 0.3s;
+  pointer-events:none;
+}
+.copy-toast.show{opacity:1;transform:translateY(0);}
+@media(max-width:600px){
+  .share-bar{bottom:20px;right:12px;}
+  .share-btn{font-size:11px;padding:8px 12px;}
+}
+</style>
+
+<div class="share-bar">
+  <button class="share-btn share-farcaster" onclick="shareOnFarcaster()">
+    <svg width="16" height="16" viewBox="0 0 1000 1000" fill="none"><rect width="1000" height="1000" rx="200" fill="#8A63D2"/><path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z" fill="white"/><path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z" fill="white"/><path d="M675.556 746.667C663.283 746.667 653.333 756.616 653.333 768.889V795.556H648.889C636.616 795.556 626.667 805.505 626.667 817.778V844.444H875.556V817.778C875.556 805.505 865.606 795.556 853.333 795.556H848.889V768.889C848.889 756.616 838.94 746.667 826.667 746.667V351.111H851.111L880 253.333H702.222V746.667H675.556Z" fill="white"/></svg>
+    Cast on Farcaster
+  </button>
+  <button class="share-btn share-copy" onclick="copyReferral()">
+    🔗 Copy Referral Link
+  </button>
+</div>
+
+<div class="copy-toast" id="copy-toast">✓ Link copied!</div>
+
+<script>
+function shareOnFarcaster() {
+  const text = encodeURIComponent('⚒ Just discovered CastForge Arena — the first Web3 gaming arena on Base!\n\nClaim 1,000 $FORGE free 👇\nhttps://castforge.fun\n\n#CastForge #Base #Farcaster');
+  window.open('https://warpcast.com/~/compose?text=' + text, '_blank');
+}
+
+function copyReferral() {
+  const link = 'https://castforge.fun/app?ref=' + Math.random().toString(36).slice(2,8).toUpperCase();
+  navigator.clipboard.writeText(link).then(() => {
+    const toast = document.getElementById('copy-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  });
+}
+</script>
 </body>
 </html>
